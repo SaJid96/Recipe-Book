@@ -14,6 +14,6 @@ export class HeaderComponent {
   }
 
   fetchResponse() {
-    this.data.fetchRecipes();
+    this.data.fetchRecipes().subscribe();
   }
 }
