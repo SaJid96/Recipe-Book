@@ -16,6 +16,7 @@ import { ApproutingModule } from './app-routing.module';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { AuthComponent } from './auth/auth/auth.component';
+import { SpinningLoaderComponent } from './shared/spinning-loader/spinning-loader.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +30,8 @@ import { AuthComponent } from './auth/auth/auth.component';
     DropdownDirective,
     RecipeStartComponent,
     RecipeEditComponent,
-    AuthComponent
+    AuthComponent,
+    SpinningLoaderComponent
   ],
   imports: [
     BrowserModule,

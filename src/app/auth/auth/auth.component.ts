@@ -10,6 +10,8 @@ import { AuthService } from 'src/app/services/auth.service';
 export class AuthComponent implements OnInit {
   constructor(private auth: AuthService) {}
   isLoggedinMode = true;
+  isLoading=false;
+  error:string=null
 
   ngOnInit(): void {}
 
@@ -22,14 +24,23 @@ export class AuthComponent implements OnInit {
     }
     const email = form.value.email;
     const password = form.value.password;
-
+    this.isLoading=true
     if(this.isLoggedinMode){
 
     }
     else{
       this.auth.signup(email, password).subscribe(
-        (response) => console.log(response),
-        (error) => console.log(error)
+        (response) => {
+          console.log(response)
+          this.isLoading=false
+        
+        },
+        (error) => {
+          console.log(error)
+          this.error='An error Occured'
+          
+          this.isLoading=false
+        }
       );
     }
   
