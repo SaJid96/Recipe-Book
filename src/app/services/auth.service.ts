@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
@@ -9,7 +9,7 @@ export interface AuthResponse {
   refreshToken: string;
   expiresIn: string;
   localId: string;
-  registered?:boolean
+  registered?: boolean;
 }
 
 @Injectable({
@@ -27,28 +27,38 @@ export class AuthService {
           returnSecureToken: true,
         }
       )
-      .pipe(
-        catchError((errorResp:any) => {
-          let errormessage = 'An error message occured';
-          if (!errorResp.error || !errorResp.error.error) {
-            return throwError(errormessage);
-          }
-          switch (errorResp.error.error.message) {
-            case 'EMAIL_EXISTS':
-              errormessage = 'This email exists already';
-          }
-          return throwError(errormessage)
-        })
-      );
+      .pipe(catchError(this.errorHandler));
   }
 
-  signIn(email: string, password: string){
-  return  this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAFMsc3LUJlx7Koftf7kLiLSylq8RZEfjU',
-    {
-      email,
-      password,
-      returnSecureToken: true,
+  signIn(email: string, password: string) {
+    return this.http
+      .post<AuthResponse>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAFMsc3LUJlx7Koftf7kLiLSylq8RZEfjU',
+        {
+          email,
+          password,
+          returnSecureToken: true,
+        }
+      )
+      .pipe(catchError(this.errorHandler));
+  }
+
+  private errorHandler(errorRes: HttpErrorResponse) {
+    let errormessage = 'An error message occured';
+    if (!errorRes.error || !errorRes.error.error) {
+      return throwError(errormessage);
     }
-    )
+    switch (errorRes.error.error.message) {
+      case 'EMAIL_EXISTS':
+        errormessage = 'This email exists already';
+        break;
+
+      case 'EMAIL_NOT_FOUND':
+        errormessage = 'the email does not exist';
+        break;
+      case 'INVALID_PASSWORD':
+        errormessage = 'The password is invalid ';
+    }
+    return throwError(errormessage);
   }
 }
