@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService, AuthResponse } from 'src/app/services/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -10,8 +11,8 @@ import { AuthService } from 'src/app/services/auth.service';
 export class AuthComponent implements OnInit {
   constructor(private auth: AuthService) {}
   isLoggedinMode = true;
-  isLoading=false;
-  error:string=null
+  isLoading = false;
+  error: string = null;
 
   ngOnInit(): void {}
 
@@ -22,28 +23,30 @@ export class AuthComponent implements OnInit {
     if (!form.valid) {
       return;
     }
+
     const email = form.value.email;
     const password = form.value.password;
-    this.isLoading=true
-    if(this.isLoggedinMode){
+    let authObs: Observable<AuthResponse>;
 
+    this.isLoading = true;
+
+    if (this.isLoggedinMode) {
+      authObs = this.auth.signIn(email, password);
+    } else {
+      authObs = this.auth.signUp(email, password);
     }
-    else{
-      this.auth.signup(email, password).subscribe(
-        (response) => {
-          console.log(response)
-          this.isLoading=false
-        
-        },
-        (errorMessage) => {
-          console.log(errorMessage)
-          this.error=errorMessage
-          
-          this.isLoading=false
-        }
-      );
-    }
-  
+    authObs.subscribe(
+      (response) => {
+        console.log(response);
+        this.isLoading = false;
+      },
+      (errorMessage) => {
+        console.log(errorMessage);
+        this.error = errorMessage;
+
+        this.isLoading = false;
+      }
+    );
     form.reset();
   }
 }
