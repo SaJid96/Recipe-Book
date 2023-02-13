@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService, AuthResponse } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-auth',
@@ -9,7 +12,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService,private router:Router) {}
   isLoggedinMode = true;
   isLoading = false;
   error: string = null;
@@ -39,6 +42,7 @@ export class AuthComponent implements OnInit {
       (response) => {
         console.log(response);
         this.isLoading = false;
+        this.router.navigate(['/recipes'])
       },
       (errorMessage) => {
         console.log(errorMessage);
