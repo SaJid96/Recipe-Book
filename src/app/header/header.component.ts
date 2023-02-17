@@ -27,7 +27,7 @@ private userSub:Subscription
 
   onLogout(){
     this.auth.logout()
-    this.router.navigate(['/auth'])
+   
   }
 
 
